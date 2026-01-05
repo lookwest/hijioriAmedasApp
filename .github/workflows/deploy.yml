@@ -1,0 +1,51 @@
+name: Deploy Weather App to Firebase
+
+on:
+  schedule:
+    # Runs at 03:00 JST every day (UTC 18:00)
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  update_data_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install pandas requests beautifulsoup4
+
+      - name: Run data update script
+        run: python3 update_weather_data.py
+
+      - name: Commit and push changes if any
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git add public/hijioriAmedas_data_utf8.csv
+          git diff --quiet --exit-code || (git commit -m "Update weather data [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }} # Push権限のあるPATを設定
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --project ${{ secrets.FIREBASE_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
