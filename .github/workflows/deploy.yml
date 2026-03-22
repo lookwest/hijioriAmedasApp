@@ -38,12 +38,22 @@ jobs:
           python3 script/plot_monthly_temp_boxplot.py
           python3 script/plot_january_snow_depth_boxplot.py
           python3 script/plot_january_snowfall_boxplot.py
+          python3 script/plot_last_month_weather.py
+          python3 script/plot_last_year_same_period_weather.py
+          python3 script/plot_seasonal_snow_depth_comparison.py
+          python3 script/plot_seasonal_weather_comparison.py
+          python3 script/plot_cumulative_precipitation.py
+          python3 script/plot_cumulative_snowfall.py
+          python3 script/plot_hot_days.py
 
       - name: Prepare public directory
         run: |
           mkdir -p public
           cp hijioriAmedas_data_utf8.csv public/
+          # img/ 内の全画像を public/ にコピー (上書き)
           cp img/*.png public/
+          # テキストファイルのコピー
+          cp data_files/january_2026_snow_depth_summary.txt public/ || true
 
       - name: Commit and Push if updated
         run: |

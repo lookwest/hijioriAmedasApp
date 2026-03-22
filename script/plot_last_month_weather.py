@@ -16,7 +16,9 @@ for col in ['最高気温(℃)', '最低気温(℃)', '最深積雪(cm)']:
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
 # 直近1ヶ月の期間を定義
-end_date = datetime(2026, 1, 5)
+end_date = df['年月日'].max()
+if pd.isna(end_date):
+    end_date = datetime.now()
 start_date = end_date - timedelta(days=31)
 
 # データをフィルタリング

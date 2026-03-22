@@ -3,32 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>直近1ヶ月の気象データ</title>
+    <title>肘折アメダス 気象ダッシュボード</title>
     <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --primary-color: #3498db;
+            --accent-color: #e74c3c;
+            --snow-color: #95a5a6;
+            --rain-color: #2980b9;
+        }
         body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
             margin: 0;
-            background-color: #f0f2f5;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            -webkit-font-smoothing: antialiased;
+        }
+        header {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 30px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .summary-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1rem; }
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .unit {
+            font-size: 0.8rem;
+            font-weight: normal;
+            margin-left: 2px;
         }
         .chart-container {
-            width: 90%;
-            max-width: 1000px;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            height: 65vh;
+            min-height: 350px;
+            margin-top: 10px;
+        }
+        #lastUpdate {
+            text-align: right;
+            font-size: 0.7rem;
+            color: #95a5a6;
+            margin-top: 10px;
+            padding-right: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>直近1ヶ月の気象データ</h1>
-    <div class="chart-container">
-        <canvas id="weatherChart"></canvas>
+    <header>
+        <h1>🏔️ 肘折アメダス 気象状況</h1>
+        <div class="subtitle">山形県大蔵村 肘折の直近1ヶ月データ</div>
+    </header>
+
+    <div class="container">
+        <div class="summary-grid">
+            <div class="card">
+                <div class="card-label">最新気温</div>
+                <div class="card-value" id="latestTemp">--<span class="unit">℃</span></div>
+            </div>
+            <div class="card">
+                <div class="card-label">最深積雪</div>
+                <div class="card-value" id="latestSnow">--<span class="unit">cm</span></div>
+            </div>
+            <div class="card">
+                <div class="card-label">最高気温 (今日)</div>
+                <div class="card-value" id="todayMaxTemp">--<span class="unit">℃</span></div>
+            </div>
+            <div class="card">
+                <div class="card-label">最低気温 (今日)</div>
+                <div class="card-value" id="todayMinTemp">--<span class="unit">℃</span></div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="weatherChart"></canvas>
+        </div>
+        <div id="lastUpdate">読み込み中...</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

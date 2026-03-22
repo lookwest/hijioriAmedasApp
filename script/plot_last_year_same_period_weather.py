@@ -16,7 +16,10 @@ for col in ['最高気温(℃)', '最低気温(℃)', '最深積雪(cm)']:
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
 # 1年前の同期間を定義
-end_date = datetime(2025, 1, 5)
+latest_date = df['年月日'].max()
+if pd.isna(latest_date):
+    latest_date = datetime.now()
+end_date = latest_date - timedelta(days=365)
 start_date = end_date - timedelta(days=31)
 
 # データをフィルタリング
